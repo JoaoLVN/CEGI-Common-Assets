@@ -9,11 +9,11 @@ public class TTS
     public static string CacheFolder = "TTSCache";
     public const string API_KEY = "0d446091a5b24a45af987c4624fd80af";
 
-    public static void Get(string text, Action<AudioClip> onLoaded,int speed=0,string idiom = "en-us", bool cache = true)
+    public static void Get(string text, Action<AudioClip> onLoaded, int speed = 0, string idiom = "en-us", bool cache = true)
     {
-        string fileName = ToFileName(text,idiom,speed.ToString());
+        string fileName = ToFileName(text, idiom, speed.ToString());
         string cacheDir = Path.Combine(Application.streamingAssetsPath, CacheFolder);
-        string path = Path.Combine(cacheDir,fileName) ;
+        string path = Path.Combine(cacheDir, fileName);
         string url = $"http://api.voicerss.org/?key={API_KEY}&hl={idiom}&src={text}&r={speed}&c=WAV&f=48khz_16bit_stereo";
 
         if (!Directory.Exists(cacheDir))
@@ -22,9 +22,11 @@ public class TTS
         if (File.Exists(path))
         {
             url = $"file://{path}";
+
             CoroutineExecutor.Start(LoadSongCoroutine(url, onLoaded));
             return;
         }
+
         CoroutineExecutor.Start(LoadSongCoroutine(url, onLoaded, cache ? path : null));
     }
 
@@ -33,7 +35,7 @@ public class TTS
         string cacheDir = Path.Combine(Application.streamingAssetsPath, CacheFolder);
         if (Directory.Exists(cacheDir))
         {
-            Directory.Delete(cacheDir,true);
+            Directory.Delete(cacheDir, true);
         }
     }
 
@@ -56,7 +58,7 @@ public class TTS
         }
     }
 
-    private static string ToFileName(string text,string idiom, string speed)
+    private static string ToFileName(string text, string idiom, string speed)
     {
         var fileName = $"{text} {idiom} {speed}";
         foreach (char c in System.IO.Path.GetInvalidFileNameChars())
